@@ -16,3 +16,6 @@ Ansible kullanarak server'a ve/veya client'lara rsyslog, netstat, tcpdump paketl
 ## PowerShell
 
 PowerShell ile bir Web API'ye get ve post işlemleri yapılmıştır. Jenkins üzerinde Windows agent oluşturarak uzak makinada istenen bir servisi takip eden ve durduğunda çalıştıran script yazılmıştır.
+
+
+Proje sunumu => https://docs.google.com/presentation/d/1tEra2DGV7cTRixD_6aL9shRezKz7ec9qpk1IpTzmHTE/edit?usp=sharing
