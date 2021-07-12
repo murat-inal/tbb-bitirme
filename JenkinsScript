@@ -1,0 +1,65 @@
+#!/usr/bin/env groovy
+
+node {
+    stage("Git Clone"){
+        git credentialsId: 'GITHUB',url:'https://github.com/murat-inal/tbb-bitirme.git'
+    }
+
+    stage("DEV Deployment"){
+
+        script {
+            env.DOCKER_BUILD_NUMBER=Jenkins.instance.getItem("buildjob").lastSuccessfulBuild.number
+        }
+        
+        sh 'kubectl apply -f ./KubernetesYamls/dev/secrets.yaml'
+        sh 'envsubst < ./KubernetesYamls/dev/app-deployment.yaml | kubectl apply -f -'
+        sh 'kubectl apply -f ./KubernetesYamls/dev/app-service.yaml'
+        sh 'kubectl apply -f ./KubernetesYamls/dev/pvc.yaml'
+        sh 'envsubst < ./KubernetesYamls/dev/sql-deployment.yaml | kubectl apply -f -'
+        sh 'kubectl apply -f ./KubernetesYamls/dev/sql-service.yaml'
+    }
+    
+    stage("TEST Deployment"){
+        
+        def deployment = input(message:'Deploy to TEST ?',ok:'ok',parameters:[booleanParam(defaultValue:true,description:'',name:'Yes')])
+          
+        if(deployment == true){
+          
+        script {
+            env.DOCKER_BUILD_NUMBER=Jenkins.instance.getItem("buildjob").lastSuccessfulBuild.number
+        }
+        
+            sh 'kubectl apply -f ./KubernetesYamls/test/secrets.yaml'
+            sh 'envsubst < ./KubernetesYamls/test/app-deployment.yaml | kubectl apply -f -'
+            sh 'kubectl apply -f ./KubernetesYamls/test/app-service.yaml'
+            sh 'kubectl apply -f ./KubernetesYamls/test/pvc.yaml'
+            sh 'envsubst < ./KubernetesYamls/test/sql-deployment.yaml | kubectl apply -f -'
+            sh 'kubectl apply -f ./KubernetesYamls/test/sql-service.yaml'
+          } 
+          else{
+              echo "TEST Deployment Aborted!"
+          }
+    }
+
+    stage("PROD Deployment"){
+        
+        def deployment = input(message:'Deploy to PROD ?',ok:'ok',parameters:[booleanParam(defaultValue:true,description:'',name:'Yes')])
+          
+        if(deployment == true){
+              
+            script {
+                env.DOCKER_BUILD_NUMBER=Jenkins.instance.getItem("buildjob").lastSuccessfulBuild.number
+            }
+            
+            sh 'kubectl apply -f ./KubernetesYamls/prod/secrets.yaml'
+            sh 'envsubst < ./KubernetesYamls/prod/app-deployment.yaml | kubectl apply -f -'
+            sh 'kubectl apply -f ./KubernetesYamls/prod/app-service.yaml'
+            sh 'kubectl apply -f ./KubernetesYamls/prod/pvc.yaml'
+            sh 'envsubst < ./KubernetesYamls/prod/sql-deployment.yaml | kubectl apply -f -'
+            sh 'kubectl apply -f ./KubernetesYamls/prod/sql-service.yaml'
+        } 
+        else{
+            echo "PROD Deployment Aborted!"
+        }
+    }
+}
