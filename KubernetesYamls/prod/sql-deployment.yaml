@@ -1,0 +1,38 @@
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: mydb
+  namespace: prod
+  labels:
+    app: mydb
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: mydb
+  template:
+    metadata:
+      labels:
+        app: mydb
+    spec:
+      containers:
+      - name: mysql
+        image: mysql
+        env:
+        - name: MYSQL_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: tbbpython-secrets
+              key: MYSQL_PASSWORD
+        - name: MYSQL_INSTANCE_NAME
+          value: sehirler
+        ports:
+        - containerPort: 3306
+        volumeMounts:
+        - name: mysql-pv-prod-volume
+          mountPath: /home/mysql
+      volumes:
+      - name: mysql-pv-prod-volume
+        persistentVolumeClaim:
+          claimName: mysql-pv-prod-claim
