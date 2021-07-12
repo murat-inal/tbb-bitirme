@@ -1,0 +1,17 @@
+---
+
+- name: check directory
+  stat:
+    path: /tmp
+  register: vp
+
+- debug:
+    msg: "{{ vp }}"
+
+- name: check directory
+  shell: ls /tmp
+  register: dr
+  when: vp.stat.exists is defined and vp.stat.exists
+
+- debug:
+    msg: "{{ dr.stdout_lines }}" 

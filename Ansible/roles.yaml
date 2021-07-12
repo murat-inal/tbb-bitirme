@@ -1,0 +1,38 @@
+- hosts: rsyslog
+  remote_user: murat
+  become: true
+  roles:
+    - role: rsyslog-install
+  tags: rsyslog-install
+
+
+- hosts: netstat
+  remote_user: murat
+  become: true
+  roles:
+    - role: netstat-install
+  tags: netstat-install
+
+
+- hosts: tcpdump
+  remote_user: murat
+  become: true
+  roles:
+    - role: tcpdump-install
+  tags: tcpdump-install
+
+
+- hosts: kubectl
+  remote_user: murat
+  become: true
+  roles:
+    - role: kube-version
+  tags: kube-version
+
+
+- hosts: docker
+  remote_user: murat
+  become: true
+  roles:
+    - role: docker-version
+  tags: docker-version
