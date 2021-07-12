@@ -1,1 +1,0 @@
-﻿Invoke-RestMethod -Method Get -Uri http://numbersapi.com/26
